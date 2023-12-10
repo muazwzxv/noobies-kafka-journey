@@ -1,4 +1,4 @@
-package io.cilantroz.demo.kafka;
+package io.cilantroz.demo.kafka.Producer;
 
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;

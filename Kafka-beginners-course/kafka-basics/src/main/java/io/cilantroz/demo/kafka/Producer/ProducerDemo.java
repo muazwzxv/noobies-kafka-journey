@@ -1,4 +1,4 @@
-package io.cilantroz.demo.kafka;
+package io.cilantroz.demo.kafka.Producer;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
