@@ -1,14 +1,15 @@
 package io.cilantroz.demo.kafka;
 
-import org.apache.kafka.clients.producer.*;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
-public class ProducerDemoWithCallbacks {
-    private static final Logger log = LoggerFactory.getLogger(ProducerDemoWithCallbacks.class.getSimpleName());
+public class ProducerDemoWithKeys {
+    private static final Logger log = LoggerFactory.getLogger(ProducerDemoWithKeys.class.getSimpleName());
 
     public static void main(String[] args) {
         log.info("I'm a kafka producer");
@@ -20,27 +21,25 @@ public class ProducerDemoWithCallbacks {
         // set producer properties
         properties.setProperty("key.serializer", StringSerializer.class.getName());
         properties.setProperty("value.serializer", StringSerializer.class.getName());
-        properties.setProperty("batch.size", "400");
-        // properties.setProperty("partitioner.class", RoundRobinPartitioner.class.getName());
 
         // create the producer
         KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
 
-        // create a producer record - to send to kafka
-        // ProducerRecord<String, String> producerRecord = new ProducerRecord<>("basics_kafka", "hello world");
-
         // send data
-        for (int j = 0; j < 10; j++) {
-            for (int i = 0; i < 30; i++) {
-                ProducerRecord<String, String> producerRecord = new ProducerRecord<>("local_kafka_cluster_basic", "Hello bois " + i);
-                produceMessage(producer, producerRecord);
-            }
+        for (int j = 0; j < 5; j++) {
+            for (int i = 0; i < 10; i++) {
+                String topic = "local_kafka_cluster_basic";
+                String key = "id_" + i;
+                String value = "Hello bois " + i;
 
-            // Sleep after each 30 message sent
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                log.error(e.getMessage());
+                ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topic, key, value);
+                produceMessage(producer, producerRecord);
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    log.warn(e.getMessage());
+                }
             }
         }
 
@@ -62,11 +61,9 @@ public class ProducerDemoWithCallbacks {
             // executes every time a record is successfully sent or an exception is thrown
             if (e == null) {
                 // the record was successfully sent
-                log.info("Received new metadata \n" +
-                        "Topic: " + metadata.topic() + "\n" +
-                        "Partition: " + metadata.partition() + "\n" +
-                        "Offset: " + metadata.offset() + "\n" +
-                        "Timestamp: " + metadata.timestamp() + "\n"
+                log.info("Messages sent \n" +
+                        "Key: " + record.key() + "\n" +
+                        "Partition: " + metadata.partition() + "\n"
                 );
                 return;
             }
