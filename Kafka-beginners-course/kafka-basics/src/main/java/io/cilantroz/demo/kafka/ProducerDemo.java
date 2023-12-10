@@ -12,7 +12,7 @@ public class ProducerDemo {
     private static final Logger log = LoggerFactory.getLogger(ProducerDemo.class.getSimpleName());
 
     public static void main(String[] args) {
-        log.info("Hello World!");
+        log.info("I'm a kafka producer");
 
         // Create producer properties
         Properties properties = new Properties();
@@ -26,7 +26,7 @@ public class ProducerDemo {
         KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
 
         // create a producer record - to send to kafka
-        ProducerRecord<String, String> producerRecord = new ProducerRecord<>("basics_java", "hello world");
+        ProducerRecord<String, String> producerRecord = new ProducerRecord<>("basics_kafka", "hello world");
 
         // send data
         producer.send(producerRecord);
@@ -34,5 +34,9 @@ public class ProducerDemo {
         // flush and close the producer -
         // sync operation, tell producer to send all data and block until done
         producer.flush();
+
+        // close the producer
+        // close() actually calls flush() before closing the producer
+        producer.close();
     }
 }
